@@ -4,6 +4,7 @@ from Channel import Channel
 class Pool:
     def __init__(self, bots: list[Bot]) -> None:
         self.bots = bots
+        self.masterBot = bots[0]
     
     def getBots(self) -> list[Bot]:
         pass
@@ -19,3 +20,5 @@ class Pool:
 
     def chatSpam(self, message: str):
         pass
+
+# TODO: in parallel do for each Bot 
