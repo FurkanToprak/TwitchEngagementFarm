@@ -58,7 +58,7 @@ class Bot:
         payload = '[{\"operationName\":\"FollowButton_FollowUser\",\"variables\":{\"input\":{\"disableNotifications\":false,\"targetID\":\"%s\"}},\"extensions\":{\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"51956f0c469f54e60211ea4e6a34b597d45c1c37b9664d4b62096a1ac03be9e6\"}}}]' % channel.getChannelId()
         r = requests.post('https://gql.twitch.tv/gql', data=payload, headers=self.requestHeader)
         if 'error' in r.text:
-            logging.error(f'[{self.getUsername()}] Error in following channel {channel.getChannelName()}.')
+            logging.error(f'[{self.getUsername()}] [Path 1] Error in following channel {channel.getChannelName()}.')
             logging.error(r.text)
         else:
             try:
@@ -67,9 +67,22 @@ class Bot:
                 logging.debug(followedChannel)
                 return True
             except Exception as e:
-                logging.error('Error in following user.')
-                logging.warning(e)
+                logging.error(f'[{self.getUsername()}] [Path 2] Error in following channel {channel.getChannelName()}.')
+                logging.error(e)
         return False
 
-    def unfollow(self, channel: Channel):
-        pass
+    def unfollow(self, channel: Channel) -> bool:
+        payload = '[{"operationName":"FollowButton_UnfollowUser","variables":{"input":{"targetID":"%s"}},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"d7fbdb4e9780dcdc0cc1618ec783309471cd05a59584fc3c56ea1c52bb632d41"}}}]' % channel.getChannelId()
+        r = requests.post('https://gql.twitch.tv/gql', data=payload, headers=self.requestHeader)
+        if 'error' in r.text:
+            logging.error(f'[{self.getUsername()}] [Path 1] Error in unfollowing channel {channel.getChannelName()}.')
+            logging.error(r.text)
+        else:
+            try:
+                requestId = r.json()[0]['extensions']['requestID']
+                logging.info(f'[{self.getUsername()}] Success following channel {channel.getChannelName()} [RequestID={requestId}].')
+                return True
+            except Exception as e:
+                logging.error(f'[{self.getUsername()}] [Path 2] Error in unfollowing channel {channel.getChannelName()}.')
+                logging.error(e)
+        return False
