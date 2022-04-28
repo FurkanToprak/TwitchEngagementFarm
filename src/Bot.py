@@ -2,6 +2,8 @@ import requests
 import logging
 import json
 
+from Channel import Channel
+
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
 
 class Bot:
@@ -41,7 +43,7 @@ class Bot:
         """ Fetches the ID of a given channel. """
         cl= f'https://api.twitch.tv/api/channels/{channelName}/access_token?need_https=true&oauth_token={self.getToken()}'
         logging.debug('Channel post link for _cid created: %s' % cl)   
-        channel = requests.get(cl, headers=self.HEADERS)
+        channel = requests.get(cl, headers=self.requestHeader)
         logging.debug(channel.text)
         try:
             tokenInfo = channel.json()['token'] 
@@ -51,3 +53,23 @@ class Bot:
         except KeyError:
             logging.error(f'[{self.getUsername()}] Could not fetch channel ID for {channelName}.')
             return ''
+
+    def follow(self, channel: Channel) -> bool:
+        payload = '[{\"operationName\":\"FollowButton_FollowUser\",\"variables\":{\"input\":{\"disableNotifications\":false,\"targetID\":\"%s\"}},\"extensions\":{\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"51956f0c469f54e60211ea4e6a34b597d45c1c37b9664d4b62096a1ac03be9e6\"}}}]' % channel.getChannelId()
+        r = requests.post('https://gql.twitch.tv/gql', data=payload, headers=self.requestHeader)
+        if 'error' in r.text:
+            logging.error(f'[{self.getUsername()}] Error in following channel {channel.getChannelName()}.')
+            logging.error(r.text)
+        else:
+            try:
+                followedChannel = r.json()[0]['data']['followUser']['follow']['user']
+                logging.info(f'[{self.getUsername()}] Success following channel {channel.getChannelName()}.')
+                logging.debug(followedChannel)
+                return True
+            except Exception as e:
+                logging.error('Error in following user.')
+                logging.warning(e)
+        return False
+
+    def unfollow(self, channel: Channel):
+        pass
