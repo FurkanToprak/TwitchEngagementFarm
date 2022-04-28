@@ -10,9 +10,10 @@ class BotBank:
             for i in range(numBots):
                 logging.debug(f'[{i}] Running create script for user.')
                 output = subprocess.run(f'cd {botGeneratorPath} && echo "" | node index.js', shell=True)
+                # TODO: scrape results from the tokenListPath and also validate output with logging
                 logging.debug(f'[{i}] Completed creation of user.')
 
-    
+  # TODO: add dict of allocation  
     def allocatePool(numBots: int) -> Pool:
         pass
 

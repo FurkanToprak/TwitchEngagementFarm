@@ -21,4 +21,4 @@ class Pool:
     def chatSpam(self, message: str):
         pass
 
-# TODO: in parallel do for each Bot 
+# TODO: implement in parallel do for each Bot 
