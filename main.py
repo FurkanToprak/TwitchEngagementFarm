@@ -12,3 +12,5 @@ if __name__ == '__main__':
         with open(config.botListPath, "w"):
             pass # delete and create empty file
     botStorage = BotBank(config.numBots, config.botGeneratorPath, config.botListPath, config.generateMoreBots)
+    botOne = botStorage.allocateBot()
+    poolOne = botStorage.allocatePool(3)

@@ -2,6 +2,7 @@ import logging
 import subprocess
 from . import Pool, Bot
 import random
+from typing import Union
 
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
 
@@ -17,22 +18,25 @@ class BotBank:
                 # TODO: check that this output ends up in botListPath
                 logging.debug(f'[{i}] Completed creation of user.')
         with open(botListPath, 'r') as botFile:
-            botLines = botFile.readlines()
+            botLines = botFile.read().split('\n')
+            lineIndex = 0
             for botLine in botLines:
                 if len(botLine) == 0:
-                    continue
+                    break # last line
                 try:
                     username, password, email, userId, token = botLine.split(' ')
                     newBot = Bot.Bot(username, password, email, userId, token)
                     if newBot.getUsername() in self.freeBots:
-                        logging.info(f'[{i}] Attempted to parse existing free bot from {botListPath}')
+                        logging.info(f'[{lineIndex}] Attempted to parse existing free bot from {botListPath}')
                     elif newBot.getUsername() in self.busyBots:
-                        logging.info(f'[{i}] Attempted to parse existing busy bot from {botListPath}')
+                        logging.info(f'[{lineIndex}] Attempted to parse existing busy bot from {botListPath}')
                     else:
-                        self.freeBot[newBot.getUsername()] = newBot
-                        logging.debug(f'[{i}] Parsed bot {newBot.getUsername()}.')
-                except: 
-                    logging.error(f'[{i}] Failed parsing bot from {botListPath}')
+                        self.freeBots[newBot.getUsername()] = newBot
+                        logging.debug(f'[{lineIndex}] Parsed bot {newBot.getUsername()}.')
+                except Exception as e: 
+                    logging.error(e)
+                    logging.error(f'[{lineIndex}] Failed parsing bot from {botListPath}')
+                lineIndex += 1
 
     def getBusyBots(self) -> dict:
         return self.busyBots
@@ -43,14 +47,18 @@ class BotBank:
     def isPoolActive(self, pool: Pool.Pool) -> bool:
         return pool.getId() in self.pools
     
-    def allocatePool(self, numBots: int) -> Pool.Pool:
+    def allocatePool(self, numBots: int) -> Union[None, Pool.Pool]:
+        if (numBots > len(self.freeBots)):
+            logging.error(f'Cannot allocate pool of {numBots} users! The number of free bots is {len(self.getFreeBots())}. The number of busy bots is {len(self.getBusyBots())}.')
+            return None
         botList = []
         for _i in range(numBots):
             fetchedBot = self.allocateBot()
             botList.append(fetchedBot)
-        newPool = Pool(botList)
+        newPool = Pool.Pool(botList)
         logging.debug(f'Allocated pool of {numBots} users. Pool master is {newPool.getId()}.')
         self.pools[newPool.getId()] = newPool
+        return newPool
 
     def isBotActive(self, bot: Bot.Bot) -> bool:
             return bot.getUsername() in self.busyBots
