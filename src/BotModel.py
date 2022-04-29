@@ -1,3 +1,4 @@
+from os import access
 from typing import Union
 import requests
 import logging
@@ -47,6 +48,8 @@ class Bot:
     def fetchChannelId(self, channelName: str) -> str:
         """ Fetches the ID of a given channel. """
         accessToken = 'qecxhnjevnnfvskhhd07od91yliqti'
+        requestHeader = self.requestHeader
+        requestHeader['Authorization'] =  f"OAuth {accessToken}"
         cl= 'https://api.twitch.tv/api/channels/' + channelName + '/access_token?need_https=true&oauth_token=' + accessToken
         logging.debug('Channel post link for _cid created: %s' % cl)   
         print(self.requestHeader)
