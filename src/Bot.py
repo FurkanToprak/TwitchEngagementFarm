@@ -86,3 +86,5 @@ class Bot:
                 logging.error(f'[{self.getUsername()}] [Path 2] Error in unfollowing channel {channel.getChannelName()}.')
                 logging.error(e)
         return False
+
+# TODO: add chat and join channel options
