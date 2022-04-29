@@ -2,4 +2,4 @@
 WordyDearestWeb
 *pycache*
 TwitchFollowBot.py
-# output/*
+output/*.csv

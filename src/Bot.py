@@ -7,10 +7,11 @@ from Channel import Channel
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
 
 class Bot:
-    def __init__(self, username: str, password: str, email: str, token: str) -> None:
+    def __init__(self, username: str, password: str, email: str, userId: str, token: str) -> None:
         self.username = username
         self.password = password
         self.email = email
+        self.userId = userId
         self.token = token
         self.requestHeader = {
             "content-type": "application/json",

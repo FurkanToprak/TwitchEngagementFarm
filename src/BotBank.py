@@ -16,8 +16,13 @@ class BotBank:
                 # TODO: scrape results from the botListPath and also validate output with logging
                 # TODO: add bot to busy bots
                 logging.debug(f'[{i}] Completed creation of user.')
-        with open(botListPath, 'r') as tokenFile:
-            tokenFile.
+        with open(botListPath, 'r') as botFile:
+            botLines = botFile.readlines()
+            for botLine in botLines:
+                if len(botLine) == 0:
+                    continue
+                username, password, email, userId, token = botLine.split(' ')
+                newBot = Bot(username, password, email, userId, token)
 
     def isPoolActive(self, pool: Pool) -> bool:
         return pool.getId() in self.pools
