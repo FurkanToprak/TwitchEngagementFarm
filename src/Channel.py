@@ -1,4 +1,4 @@
-from Bot import Bot
+from . import Bot
 
 class Channel:
     """ Abstraction of a Twitch Channel. """

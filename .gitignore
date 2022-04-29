@@ -3,3 +3,4 @@ WordyDearestWeb
 *pycache*
 TwitchFollowBot.py
 output/*.csv
+.env
