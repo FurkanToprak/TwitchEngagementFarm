@@ -13,8 +13,9 @@ if __name__ == '__main__':
         with open(config.botListPath, "w"):
             pass # delete and create empty file
     botStorage = BotBank(config.numBots, config.botGeneratorPath, config.botListPath, config.generateMoreBots)
-    botOne = botStorage.allocateBot()
     poolOne = botStorage.allocatePool(3)
-    channelOne = Channel('Ninja', botOne)
-    print(channelOne.getChannelName())
-    print(channelOne.getChannelId())
+    poolOneMaster = poolOne.getMasterBot()
+    # botOne = botStorage.allocateBot()
+    channelOne = Channel('Ninja', poolOneMaster) # or call with a single bot like botOne
+    # botOne.followChannel(channelOne)
+    poolOne.followChannel(channelOne)

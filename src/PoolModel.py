@@ -17,6 +17,9 @@ class Pool:
     def getId(self) -> str:
         return self.id
     
+    def getMasterBot(self):
+        return self.masterBot
+    
     def getChannel(self) -> Union[ChannelModel.Channel, None]:
         return self.channel
 
@@ -26,13 +29,13 @@ class Pool:
     def joinChannel(self, channel: ChannelModel.Channel):
         for bot in self.bots:
             bot.joinChannel(channel)
-        logging.info(f'Pool {self.getId()} followed channel {channel.getChannelName()}')
+        logging.info(f'Pool with master bot {self.getId()} joined channel {channel.getChannelName()}')
 
     def followChannel(self, channel: ChannelModel.Channel):
-        logging.info(f'Pool {self.getId()} has started to follow channel {channel.getChannelName()}')
+        logging.info(f'Pool with master bot {self.getId()} has started to follow channel {channel.getChannelName()}')
         for bot in self.bots:
             bot.followChannel(channel)
-        logging.info(f'Pool {self.getId()} followed channel {channel.getChannelName()}')
+        logging.info(f'Pool with master bot {self.getId()} followed channel {channel.getChannelName()}')
 
     def chatChannel(self, messages: list[str]):
         if self.getChannel() is None:

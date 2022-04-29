@@ -52,11 +52,8 @@ class Bot:
         requestHeader['Authorization'] =  f"OAuth {accessToken}"
         cl= 'https://api.twitch.tv/api/channels/' + channelName + '/access_token?need_https=true&oauth_token=' + accessToken
         logging.debug('Channel post link for _cid created: %s' % cl)   
-        print(self.requestHeader)
-        channel = requests.get(cl, headers=self.requestHeader)
+        channel = requests.get(cl, headers=requestHeader)
         logging.debug(channel.text)
-        print('fetched channel') #FIXME: 404 error
-        print(channel)
         try:
             tokenInfo = channel.json()['token'] 
             channelId = json.loads(tokenInfo)['channel_id']

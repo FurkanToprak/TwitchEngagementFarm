@@ -67,7 +67,7 @@ class BotBank:
         for bot in pool.getBots():
             self.freeBot(bot)
         self.pools.pop(pool.getId())
-        logging.debug(f'Freed pool {pool.getId()}.')
+        logging.debug(f'Freed pool with master bot {pool.getId()}.')
 
 
     def allocateBot(self) -> BotModel.Bot:
