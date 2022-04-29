@@ -1,8 +1,6 @@
-from . import Bot
-
 class Channel:
     """ Abstraction of a Twitch Channel. """
-    def __init__(self, channelName: str, masterBot: Bot) -> None:
+    def __init__(self, channelName: str, masterBot) -> None:
         self.channelName = channelName
         self.channelId = masterBot.fetchChannelId(channelName)
 

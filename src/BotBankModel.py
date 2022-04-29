@@ -1,6 +1,6 @@
 import logging
 import subprocess
-from . import Pool, Bot
+from . import BotModel, PoolModel
 import random
 from typing import Union
 
@@ -25,7 +25,7 @@ class BotBank:
                     break # last line
                 try:
                     username, password, email, userId, token = botLine.split(' ')
-                    newBot = Bot.Bot(username, password, email, userId, token)
+                    newBot = BotModel.Bot(username, password, email, userId, token)
                     if newBot.getUsername() in self.freeBots:
                         logging.info(f'[{lineIndex}] Attempted to parse existing free bot from {botListPath}')
                     elif newBot.getUsername() in self.busyBots:
@@ -44,10 +44,10 @@ class BotBank:
     def getFreeBots(self) -> dict:
         return self.freeBots
 
-    def isPoolActive(self, pool: Pool.Pool) -> bool:
+    def isPoolActive(self, pool: PoolModel.Pool) -> bool:
         return pool.getId() in self.pools
     
-    def allocatePool(self, numBots: int) -> Union[None, Pool.Pool]:
+    def allocatePool(self, numBots: int) -> Union[None, PoolModel.Pool]:
         if (numBots > len(self.freeBots)):
             logging.error(f'Cannot allocate pool of {numBots} users! The number of free bots is {len(self.getFreeBots())}. The number of busy bots is {len(self.getBusyBots())}.')
             return None
@@ -55,32 +55,32 @@ class BotBank:
         for _i in range(numBots):
             fetchedBot = self.allocateBot()
             botList.append(fetchedBot)
-        newPool = Pool.Pool(botList)
+        newPool = PoolModel.Pool(botList)
         logging.debug(f'Allocated pool of {numBots} users. Pool master is {newPool.getId()}.')
         self.pools[newPool.getId()] = newPool
         return newPool
 
-    def isBotActive(self, bot: Bot.Bot) -> bool:
+    def isBotActive(self, bot: BotModel.Bot) -> bool:
             return bot.getUsername() in self.busyBots
 
-    def freePool(self, pool: Pool.Pool):
+    def freePool(self, pool: PoolModel.Pool):
         for bot in pool.getBots():
             self.freeBot(bot)
         self.pools.pop(pool.getId())
         logging.debug(f'Freed pool {pool.getId()}.')
 
 
-    def allocateBot(self) -> Bot.Bot:
+    def allocateBot(self) -> BotModel.Bot:
         randomBotUsername = random.choice(list(self.freeBots))
-        freeBot: Bot.Bot = self.freeBots.pop(randomBotUsername)
+        freeBot: BotModel.Bot = self.freeBots.pop(randomBotUsername)
         logging.debug('freeBot')
         logging.debug(freeBot)
         self.busyBots[freeBot.getUsername()] = freeBot
         return freeBot # TODO: check that it's a bot returned
 
-    def freeBot(self, bot: Bot.Bot):
+    def freeBot(self, bot: BotModel.Bot):
         try:
-            busyBot: Bot.Bot = self.busyBots.pop(bot.getUsername())
+            busyBot: BotModel.Bot = self.busyBots.pop(bot.getUsername())
             self.freeBots[busyBot.getUsername()] = busyBot # TODO: make sure it works
             logging.debug(f'Freed bot {bot.getUsername()}.')
         except KeyError:

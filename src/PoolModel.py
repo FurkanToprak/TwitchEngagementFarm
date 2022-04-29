@@ -1,12 +1,12 @@
 from math import ceil
 from typing import Union
-from . import Bot, Channel
+from . import BotModel, ChannelModel
 import logging
 
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
 
 class Pool:
-    def __init__(self, bots: list[Bot.Bot]) -> None:
+    def __init__(self, bots: list[BotModel.Bot]) -> None:
         if (len(bots) == 0):
             logging.error('Cannot have a Pool without bots!')
         self.bots = bots
@@ -17,18 +17,18 @@ class Pool:
     def getId(self) -> str:
         return self.id
     
-    def getChannel(self) -> Union[Channel.Channel, None]:
+    def getChannel(self) -> Union[ChannelModel.Channel, None]:
         return self.channel
 
-    def getBots(self) -> list[Bot.Bot]:
+    def getBots(self) -> list[BotModel.Bot]:
         return self.bots
 
-    def joinChannel(self, channel: Channel.Channel):
+    def joinChannel(self, channel: ChannelModel.Channel):
         for bot in self.bots:
             bot.joinChannel(channel)
         logging.info(f'Pool {self.getId()} followed channel {channel.getChannelName()}')
 
-    def followChannel(self, channel: Channel.Channel):
+    def followChannel(self, channel: ChannelModel.Channel):
         logging.info(f'Pool {self.getId()} has started to follow channel {channel.getChannelName()}')
         for bot in self.bots:
             bot.followChannel(channel)

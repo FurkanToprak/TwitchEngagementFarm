@@ -1,6 +1,7 @@
 import logging
+from src.ChannelModel import Channel
 from src import config
-from src.BotBank import BotBank
+from src.BotBankModel import BotBank
 import os
 
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
@@ -14,3 +15,6 @@ if __name__ == '__main__':
     botStorage = BotBank(config.numBots, config.botGeneratorPath, config.botListPath, config.generateMoreBots)
     botOne = botStorage.allocateBot()
     poolOne = botStorage.allocatePool(3)
+    channelOne = Channel('Ninja', botOne)
+    print(channelOne.getChannelName())
+    print(channelOne.getChannelId())
