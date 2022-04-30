@@ -57,3 +57,5 @@ https://dev.twitch.tv/docs/irc
 
 ## Disclaimer
 This is for educational purposes ONLY. By downloading this code, you agree to not use this code for any malicious persons and to not abuse Twitch.tv or any other website using this code or its derivatives. Always follow Twitch.tv's Terms of Service and the law.
+
+## TODO: use .env for all API keys.
