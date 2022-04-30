@@ -52,6 +52,8 @@ If each bot were to use a different proxy, this would be nearly impossible to de
 
 `Channel`: Represents a channel to follow. A channel can only be created by the master of a Pool, due to the Twitch API's OAuth requirements.
 
+## Chatting
+https://dev.twitch.tv/docs/irc
 
 ## Disclaimer
 This is for educational purposes ONLY. By downloading this code, you agree to not use this code for any malicious persons and to not abuse Twitch.tv or any other website using this code or its derivatives. Always follow Twitch.tv's Terms of Service and the law.
