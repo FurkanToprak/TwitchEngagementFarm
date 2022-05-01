@@ -19,3 +19,4 @@ if __name__ == '__main__':
     channelOne = Channel('Ninja', poolOneMaster) # or call with a single bot like botOne
     # botOne.followChannel(channelOne)
     poolOne.followChannel(channelOne)
+    poolOne.chatChannel(['hello world', 'my name is jeff', 'i am so cute', 'poggers!!!!!!'])

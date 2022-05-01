@@ -3,9 +3,14 @@ from typing import Union
 import requests
 import logging
 import json
-from . import ChannelModel
+import time
+from . import ChannelModel, config
+from random import randint
 
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
+
+def getRandomDelay():
+    return randint(config.minDelay, config.maxDelay)
 
 class Bot:
     def __init__(self, username: str, password: str, email: str, userId: str, token: str) -> None:
@@ -101,6 +106,9 @@ class Bot:
         pass
     
     def chatChannel(self, channel: ChannelModel.Channel) -> bool:
+        # TODO: wait at barrier for timer
+        # message in channel
+        # new random timer
         pass
 
 # TODO: add chat and join channel options based off of twitch IRC

@@ -9,6 +9,12 @@ All parameter settings are found in `/src/config.py`.
 ### numBots
 Sets the number of bots used by the program.
 
+### minDelay
+Sets the minimum amount of time before the bot can chat again. 
+
+### maxDelay
+Sets the minimum amount of time before the bot can chat again.
+
 ### botGeneratorPath
 The `BotBank` class creates users by utilizing an executable that can create a list of OAuth tokens. 
 This is the path of an executable program that can generate new accounts. Ensure that this program exists on a directory path `botGeneratorPath`, is installed (use `npm install`, etc), and uses `node index.js` to start.
@@ -54,6 +60,11 @@ If each bot were to use a different proxy, this would be nearly impossible to de
 
 ## Chatting
 https://dev.twitch.tv/docs/irc
+
+### Delay Mechanism 
+- Set a random timer from `minDelay` seconds to `maxDelay` seconds. 
+- After each chat made by another user in the channel, if the timer is finished, your bot fires a message in the channel chat. 
+- The timer resets with another random duration
 
 ## Disclaimer
 This is for educational purposes ONLY. By downloading this code, you agree to not use this code for any malicious persons and to not abuse Twitch.tv or any other website using this code or its derivatives. Always follow Twitch.tv's Terms of Service and the law.
