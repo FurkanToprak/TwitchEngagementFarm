@@ -2,6 +2,7 @@ from math import ceil
 from typing import Union
 from . import BotModel, ChannelModel
 import logging
+import asyncio
 
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
 
@@ -26,9 +27,9 @@ class Pool:
     def getBots(self) -> list[BotModel.Bot]:
         return self.bots
 
-    def joinChannel(self, channel: ChannelModel.Channel):
-        for bot in self.bots:
-            bot.joinChannel(channel)
+    async def joinChannel(self, channel: ChannelModel.Channel):
+        self.channel = channel
+        joins = await asyncio.gather(*[bot.joinChannel(channel) for bot in self.getBots()])
         logging.info(f'Pool with master bot {self.getId()} joined channel {channel.getChannelName()}')
 
     def followChannel(self, channel: ChannelModel.Channel):
@@ -43,19 +44,20 @@ class Pool:
             return;
         logging.info(f'Starting chat with {len(messages)} messages in channel {self.getChannel().getChannelName()}')
         if (len(messages) > len(self.getBots())):
-            diff = len(self.getBots()) - len(messages)
-            maxDiffPerBot = ceil(diff / len(self.getBots)) 
-            logging.info(f'More bots than messages. At least one bot will say {maxDiffPerBot} things.')
+            maxDiffPerBot = ceil(len(messages) / len(self.getBots())) 
+            overworkedBots = len(messages) % len(self.getBots())
+            underworkedBots = len(self.getBots()) - overworkedBots
+            logging.info(f'More messages than bots. {overworkedBots} bots will say {maxDiffPerBot} things. {underworkedBots} bots will say {maxDiffPerBot - 1} things.')
         elif (len(messages) < len(self.getBots())):
             idleBots = len(self.getBots()) - len(messages)
             logging.info(f'More bots than messages. {idleBots} bots will not say anything.')
-        else:
-            # of messages matches # of bots in pool.
-            for messageIndex, message in messages:
-                bot = self.bots[botIndex]
+        messageIndex = 0
+        for message in messages:
                 botIndex = messageIndex % len(self.getBots())
+                bot = self.bots[botIndex]
                 logging.debug(f'[{messageIndex}] {bot.getUsername()} is chatting [{message}] in channel {self.getChannel().getChannelName()}')
                 bot.chatChannel(message)
+                messageIndex += 1
 
 
     def chatSpamChannel(self, message: str):

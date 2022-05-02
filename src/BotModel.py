@@ -1,23 +1,16 @@
-from os import access
 from typing import Union
 import requests
 import logging
 import json
-import time
-from . import ChannelModel, config
-from random import randint
+from . import ChannelModel, config, IRCBotModel
 
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
-
-def getRandomDelay():
-    return randint(config.minDelay, config.maxDelay)
 
 class Bot:
     def __init__(self, username: str, password: str, email: str, userId: str, token: str) -> None:
         self.username = username
         self.password = password
         self.email = email
-        self.userId = userId
         self.token = token
         self.requestHeader = {
             "content-type": "application/json",
@@ -33,7 +26,9 @@ class Bot:
             "x-apple-os-version": "12.3.1",
             "Authorization": f"OAuth {token}"
         }
+        self.userId = self.fetchUserId() # userId
         self.channel = None
+        self.irc = None
     
     def getUsername(self):
         return self.username
@@ -43,6 +38,14 @@ class Bot:
 
     def getEmail(self):
         return self.email
+
+    def getUserId(self):
+        return self.userId
+
+    def fetchUserId(self):
+        r = requests.get(f'https://api.twitch.tv/helix/users?login={self.getUsername()}', headers=self.requestHeader)
+        print(r.text)
+        return r.text
 
     def getToken(self):
         return self.token
@@ -102,14 +105,32 @@ class Bot:
                 logging.error(e)
         return False
     
-    def joinChannel(self, channel: ChannelModel.Channel) -> bool:
-        pass
-    
-    def chatChannel(self, channel: ChannelModel.Channel) -> bool:
-        # TODO: wait at barrier for timer
-        # message in channel
-        # new random timer
+    def getUserFollows(self):
+        accessToken = 'qecxhnjevnnfvskhhd07od91yliqti'
+        requestHeader = self.requestHeader
+        requestHeader['Authorization'] =  f"Bearer {accessToken}"
+        uf= 'https://api.twitch.tv/helix/users/follows?from_id=' + self.getUserId() + '/access_token?need_https=true&oauth_token=' + accessToken
+        r = requests.get(uf, headers=requestHeader)
+        print(r.text) # TODO: test
         pass
 
-# TODO: add chat and join channel options based off of twitch IRC
+    async def joinChannel(self, channel: ChannelModel.Channel) -> bool:
+        try:
+            self.irc = IRCBotModel.IRCBot(self.getUsername(), self.getToken(), channel).start()
+            await self.irc.handle_forever()
+            return True
+        except:
+            return False
+    
+    def leaveChannel(self):
+        self.irc.disconnect()
+        # self.irc.stop()?
+
+    
+    def chatChannel(self, message: str) -> bool:
+        if self.channel is None:
+            logging.error(f'[{self.getUsername()}] Cannot chat in channel without joining a channel!')
+            return
+        self.irc.queueMessage(message)
+
 
