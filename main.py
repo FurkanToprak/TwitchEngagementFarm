@@ -8,7 +8,7 @@ import asyncio
 
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
 
-async def main():
+def main():
     logging.info(f"Creating a pool of {config.numBots} bots.")
     if config.resetTokens:
         os.remove(config.botListPath)
@@ -18,12 +18,13 @@ async def main():
     # poolOne = botStorage.allocatePool(3)
     # poolOneMaster = poolOne.getMasterBot()
     botOne = botStorage.allocateBot()
-    channelOne = Channel('iiTzTimmy', botOne) # or call with a single bot like botOne
+    channelOne = Channel('calvinsims', botOne) # or call with a single bot like botOne
     botOne.followChannel(channelOne)
-    print('before')
-    await botOne.joinChannel(channelOne)
-    print('after')
-    # botOne.chatChannel('SEARCH FOR MESSAGE')
+    botOne.chatChannel('1 HELLO WORLD!')
+    botOne.chatChannel('2 HELLO WORLD!')
+    botOne.chatChannel('3 HELLO WORLD!')
+    botOne.chatChannel('4 HELLO WORLD!')
+    botOne.joinChannel(channelOne)
     # sleep(10000)
     # poolOne.followChannel(channelOne)
     # await poolOne.joinChannel(channelOne)
@@ -31,5 +32,5 @@ async def main():
     # poolOne.chatChannel(['hello world', 'my name is jeff', 'i am so cute', 'poggers!!!!!!'])
 
 if __name__ == '__main__':
-    asyncio.run(main())
-    # main()
+    # asyncio.run(main())
+    main()

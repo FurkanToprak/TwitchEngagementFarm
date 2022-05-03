@@ -30,7 +30,7 @@ class TwitchChatIRC():
 		
 		# start connection
 		self.__SOCKET.connect((self.__HOST, self.__PORT))
-		logging.debug('Connected to',self.__HOST,'on port',self.__PORT)
+		logging.debug(f'Connected to {self.__HOST} on port {self.__PORT}')
 
 		# log in
 		self.__send_raw('CAP REQ :twitch.tv/tags')

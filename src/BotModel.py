@@ -4,8 +4,7 @@ import logging
 import json
 from . import ChannelModel, config
 from src.irc import twitch_chat_irc
-from time import time
-from . import config
+import time
 from random import randint
 
 logging.basicConfig(format='[%(asctime)s] %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
@@ -39,6 +38,7 @@ class Bot:
         self.channel = None
         self.irc = None
         self.queue = []
+        self.idleUntil = time.time() + getRandomDelay()
     
     def getUsername(self):
         return self.username
@@ -110,20 +110,26 @@ class Bot:
                 logging.error(e)
         return False
     
-
-
     def joinChannel(self, channel: ChannelModel.Channel) -> bool:
         self.irc = twitch_chat_irc.TwitchChatIRC(self.getUsername(), f'oauth:{self.getToken()}')
         self.channel = channel
-        def attemptChat(message):
-            print(f'message in {self.channel.getChannelName()}')
-            print(message)
+        def attemptChat(_message):
+            # print('recieved message', _message)
+            # TODO: send message
+            if len(self.queue) == 0:
+                return
+            timeElapsed = (time.time() - self.idleUntil)
+            if timeElapsed < config.minDelay:
+                return # log
+            logging.info(f'User {self.getUsername()} is chatting:')
+            nextMessage = self.queue.pop(0)
+            self.irc.send(self.channel.getChannelName(), nextMessage)
+            # reset timer
+            self.idleUntil = time.time() + getRandomDelay()
         self.irc.listen(self.channel.getChannelName(), on_message=attemptChat)
 
     def chatChannel(self, message: str) -> bool:
-        if self.channel is None:
-            logging.error(f'[{self.getUsername()}] Cannot chat in channel without joining a channel!')
-            return
+        logging.info(f'[{self.getUsername()}] queued chat: {message}')
         self.queue.append(message)
 
     # def getUserFollows(self):
