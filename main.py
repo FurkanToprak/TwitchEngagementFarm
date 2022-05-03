@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 from src.ChannelModel import Channel
 from src import config
 from src.BotBankModel import BotBank
@@ -14,15 +15,21 @@ async def main():
         with open(config.botListPath, "w"):
             pass # delete and create empty file
     botStorage = BotBank(config.numBots, config.botGeneratorPath, config.botListPath, config.generateMoreBots)
-    poolOne = botStorage.allocatePool(3)
-    poolOneMaster = poolOne.getMasterBot()
-    # botOne = botStorage.allocateBot()
-    channelOne = Channel('iiTzTimmy', poolOneMaster) # or call with a single bot like botOne
-    # botOne.followChannel(channelOne)
-    poolOne.followChannel(channelOne)
-    await poolOne.joinChannel(channelOne)
+    # poolOne = botStorage.allocatePool(3)
+    # poolOneMaster = poolOne.getMasterBot()
+    botOne = botStorage.allocateBot()
+    channelOne = Channel('iiTzTimmy', botOne) # or call with a single bot like botOne
+    botOne.followChannel(channelOne)
+    print('before')
+    await botOne.joinChannel(channelOne)
+    print('after')
+    # botOne.chatChannel('SEARCH FOR MESSAGE')
+    # sleep(10000)
+    # poolOne.followChannel(channelOne)
+    # await poolOne.joinChannel(channelOne)
     # TODO: test poolOne.getMasterBot().getUserFollows()
-    poolOne.chatChannel(['hello world', 'my name is jeff', 'i am so cute', 'poggers!!!!!!'])
+    # poolOne.chatChannel(['hello world', 'my name is jeff', 'i am so cute', 'poggers!!!!!!'])
 
 if __name__ == '__main__':
     asyncio.run(main())
+    # main()
