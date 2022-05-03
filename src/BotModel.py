@@ -111,18 +111,18 @@ class Bot:
         return False
     
     def joinChannel(self, channel: ChannelModel.Channel) -> bool:
-        self.irc = twitch_chat_irc.TwitchChatIRC(self.getUsername(), f'oauth:{self.getToken()}')
+        self.irc = twitch_chat_irc.TwitchChatIRC(self.getUsername(), self.getToken())
         self.channel = channel
         def attemptChat(_message):
-            # print('recieved message', _message)
+            logging.debug(f'recieved message {_message}')
             # TODO: send message
             if len(self.queue) == 0:
                 return
             timeElapsed = (time.time() - self.idleUntil)
             if timeElapsed < config.minDelay:
                 return # log
-            logging.info(f'User {self.getUsername()} is chatting:')
             nextMessage = self.queue.pop(0)
+            logging.info(f'User {self.getUsername()} is chatting in channel {self.channel.getChannelName()}: [{nextMessage}]')
             self.irc.send(self.channel.getChannelName(), nextMessage)
             # reset timer
             self.idleUntil = time.time() + getRandomDelay()

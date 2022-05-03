@@ -18,7 +18,7 @@ def main():
     # poolOne = botStorage.allocatePool(3)
     # poolOneMaster = poolOne.getMasterBot()
     botOne = botStorage.allocateBot()
-    channelOne = Channel('calvinsims', botOne) # or call with a single bot like botOne
+    channelOne = Channel('overlord_jc', botOne) # or call with a single bot like botOne
     botOne.followChannel(channelOne)
     botOne.chatChannel('1 HELLO WORLD!')
     botOne.chatChannel('2 HELLO WORLD!')
